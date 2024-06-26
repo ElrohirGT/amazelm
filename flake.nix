@@ -39,7 +39,13 @@
         default = pkgs.mkShell {
           packages = with pkgs; [
             elmPackages.elm
+            elmPackages.elm-format
           ];
+
+          shellHook = ''
+                  alias e=exit
+            alias nvim="nix run github:ElrohirGT/ConfigurationFiles#vim"
+          '';
         };
       };
     };
