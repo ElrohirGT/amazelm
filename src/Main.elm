@@ -7,14 +7,16 @@ module Main exposing (..)
 --
 
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Events exposing (onClick)
+import Html exposing (Html, button, div, input, text)
+import Html.Attributes exposing (placeholder, value)
+import Html.Events exposing (onClick, onInput)
 
 
 
 -- MAIN
 
 
+main : Program () Model Msg
 main =
     Browser.sandbox { init = init, update = update, view = view }
 
@@ -24,12 +26,14 @@ main =
 
 
 type alias Model =
-    Int
+    { content : String
+    }
 
 
 init : Model
 init =
-    0
+    { content = ""
+    }
 
 
 
@@ -37,18 +41,16 @@ init =
 
 
 type Msg
-    = Increment
-    | Decrement
+    = UpdateContent String
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
-            model + 1
-
-        Decrement ->
-            model - 1
+        UpdateContent newContent ->
+            { model
+                | content = newContent
+            }
 
 
 
@@ -57,8 +59,16 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    let
+        contentLength =
+            String.length model.content
+    in
     div []
-        [ button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (String.fromInt model) ]
-        , button [ onClick Increment ] [ text "+" ]
+        [ input [ placeholder "Text to reverse: ", value model.content, onInput UpdateContent ] []
+        , div [] [ text (String.reverse model.content) ]
+        , if contentLength == 0 then
+            div [] []
+
+          else
+            div [] [ text (String.concat [ "The length is: ", String.fromInt contentLength ]) ]
         ]
