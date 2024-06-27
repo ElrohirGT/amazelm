@@ -1,15 +1,10 @@
-module Main exposing (..)
-
--- Press buttons to increment and decrement a counter.
---
--- Read how it works:
---   https://guide.elm-lang.org/architecture/buttons.html
---
+module Main exposing (Model, Msg(..), init, main, subscriptions, update, view, viewLink)
 
 import Browser
-import Html exposing (Html, button, div, input, text)
-import Html.Attributes exposing (placeholder, style, type_, value)
-import Html.Events exposing (onClick, onInput)
+import Browser.Navigation as Nav
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Url
 
 
 
@@ -18,7 +13,14 @@ import Html.Events exposing (onClick, onInput)
 
 main : Program () Model Msg
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.application
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        , onUrlChange = UrlChanged
+        , onUrlRequest = LinkClicked
+        }
 
 
 
@@ -26,18 +28,14 @@ main =
 
 
 type alias Model =
-    { name : String
-    , password : String
-    , repeatedPassword : String
+    { key : Nav.Key
+    , url : Url.Url
     }
 
 
-init : Model
-init =
-    { name = ""
-    , password = ""
-    , repeatedPassword = ""
-    }
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
+    ( Model key url, Cmd.none )
 
 
 
@@ -45,61 +43,57 @@ init =
 
 
 type Msg
-    = Name String
-    | Password String
-    | RepeatedPassword String
+    = LinkClicked Browser.UrlRequest
+    | UrlChanged Url.Url
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Name newName ->
-            { model
-                | name = newName
-            }
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
 
-        Password newPwd ->
-            { model
-                | password = newPwd
-            }
+                Browser.External href ->
+                    ( model, Nav.load href )
 
-        RepeatedPassword newPwd ->
-            { model
-                | repeatedPassword = newPwd
-            }
+        UrlChanged url ->
+            ( { model | url = url }
+            , Cmd.none
+            )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
 
 
 
 -- VIEW
 
 
-inputView t p v msg =
-    input [ type_ t, placeholder p, value v, onInput msg ] []
-
-
-view : Model -> Html Msg
+view : Model -> Browser.Document Msg
 view model =
-    div [ style "display" "flex", style "flex-direction" "column" ]
-        [ inputView "text" "Username:" model.name Name
-        , inputView "password" "Password:" model.password Password
-        , inputView "password" "Repeat your password:" model.repeatedPassword RepeatedPassword
-        , statusView model
+    { title = "URL Interceptor"
+    , body =
+        [ text "The current URL is: "
+        , b [] [ text (Url.toString model.url) ]
+        , ul []
+            [ viewLink "/home"
+            , viewLink "/profile"
+            , viewLink "/reviews/the-century-of-the-self"
+            , viewLink "/reviews/public-opinion"
+            , viewLink "/reviews/shah-of-shahs"
+            ]
         ]
+    }
 
 
-statusView : Model -> Html Msg
-statusView model =
-    if String.length model.password == 0 then
-        text ""
-
-    else if String.length model.password <= 8 then
-        text "Password is too short!"
-
-    else if not (String.any Char.isUpper model.password) || not (String.any Char.isLower model.password) || not (String.any Char.isDigit model.password) then
-        text "The password must contain lower case letters, upper case letters and numbers!"
-
-    else if model.password == model.repeatedPassword then
-        text "Passwords Match!"
-
-    else
-        text "Password don't match!"
+viewLink : String -> Html msg
+viewLink path =
+    li [] [ a [ href path ] [ text path ] ]
