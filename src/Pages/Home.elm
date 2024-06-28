@@ -1,11 +1,11 @@
 module Pages.Home exposing (..)
 
 import Browser
-import Browser.Navigation as Nav
+import Css exposing (..)
 import Data.Product exposing (Product)
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Url
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (..)
+import Routing exposing (goToDetails)
 
 
 
@@ -17,6 +17,7 @@ type alias Model =
     }
 
 
+init : { products : List a }
 init =
     { products = []
     }
@@ -39,15 +40,37 @@ update msg model =
 
 
 -- VIEW
+-- view : Model -> Browser.Document Msg
 
 
-view : Model -> Browser.Document Msg
+view : Model -> { title : String, body : List (Html msg) }
 view _ =
     { title = "Amazelm"
     , body =
         [ div []
-            [ text "Welcome to Amazelm Home!"
-            , a [] [ text "Go to another page" ]
+            [ headerView
             ]
         ]
     }
+
+
+headerView : Html msg
+headerView =
+    div
+        [ src "help.png"
+        , css
+            [ displayFlex
+            , justifyContent spaceBetween
+            , padding (rem 1)
+            ]
+        ]
+        [ div []
+            [ img [] []
+            , img [] []
+            ]
+        , div []
+            [ text "ElrohirGT"
+            , img [] []
+            , img [] []
+            ]
+        ]

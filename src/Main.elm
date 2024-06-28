@@ -3,6 +3,7 @@ module Main exposing (Model, Msg(..), init, main, subscriptions, update, view)
 import Browser
 import Browser.Navigation as Nav
 import Html
+import Html.Styled exposing (toUnstyled)
 import Pages.Details as DetailsPage
 import Pages.Home as HomePage
 import Pages.NotFound as NotFoundPage
@@ -98,7 +99,7 @@ view model =
                     page pageModel
             in
             { title = title
-            , body = List.map (Html.map toMsg) body
+            , body = List.map (Html.map toMsg) (List.map toUnstyled body)
             }
     in
     case model.route of
