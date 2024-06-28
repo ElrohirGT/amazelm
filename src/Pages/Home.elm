@@ -42,7 +42,12 @@ update msg model =
 
 
 view : Model -> Browser.Document Msg
-view model =
+view _ =
     { title = "Amazelm"
-    , body = [ text "Welcome to Amazelm Home!" ]
+    , body =
+        [ div []
+            [ text "Welcome to Amazelm Home!"
+            , a [] [ text "Go to another page" ]
+            ]
+        ]
     }

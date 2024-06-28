@@ -30,6 +30,14 @@
           };
           inherit system;
         });
+    getDevPkgs = pkgs:
+      with pkgs; [
+        elmPackages.elm
+        elmPackages.elm-format
+        nodePackages.live-server
+        process-compose
+        entr
+      ];
   in {
     packages = forAllSystems {
       function = {
@@ -38,7 +46,7 @@
       }: {
         dev = pkgs.writeShellApplication {
           name = "Amazelm dev server";
-          runtimeInputs = with pkgs; [nodePackages.live-server elmPackages.elm entr process-compose];
+          runtimeInputs = getDevPkgs pkgs;
           text = ''
             process-compose
           '';
@@ -52,10 +60,7 @@
         system,
       }: {
         default = pkgs.mkShell {
-          packages = with pkgs; [
-            elmPackages.elm
-            elmPackages.elm-format
-          ];
+          packages = getDevPkgs pkgs;
 
           shellHook = ''
             alias e=exit

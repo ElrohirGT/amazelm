@@ -2,8 +2,8 @@ version: "0.5"
 
 processes:
   compilation:
-    description: Recompiles the ELM application everytime the srouce code changes
-    command: find src/ | entr -s 'elm make src/Main.elm'
+    description: Recompiles the ELM application everytime the source code changes
+    command: find src/ | entr -n elm make src/Main.elm
     ready_log_line: "Success!"
 
   hot-reloading:

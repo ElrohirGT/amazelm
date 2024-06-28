@@ -6135,11 +6135,26 @@ var $author$project$Pages$Details$view = function (_v0) {
 		title: 'Amazelm'
 	};
 };
-var $author$project$Pages$Home$view = function (model) {
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $author$project$Pages$Home$view = function (_v0) {
 	return {
 		body: _List_fromArray(
 			[
-				$elm$html$Html$text('Welcome to Amazelm Home!')
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Welcome to Amazelm Home!'),
+						A2(
+						$elm$html$Html$a,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Go to another page')
+							]))
+					]))
 			]),
 		title: 'Amazelm'
 	};
