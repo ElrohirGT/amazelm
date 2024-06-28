@@ -31,6 +31,21 @@
           inherit system;
         });
   in {
+    packages = forAllSystems {
+      function = {
+        pkgs,
+        system,
+      }: {
+        dev = pkgs.writeShellApplication {
+          name = "Amazelm dev server";
+          runtimeInputs = with pkgs; [nodePackages.live-server elmPackages.elm entr process-compose];
+          text = ''
+            process-compose
+          '';
+        };
+      };
+    };
+
     devShells = forAllSystems {
       function = {
         pkgs,
@@ -43,7 +58,7 @@
           ];
 
           shellHook = ''
-                  alias e=exit
+            alias e=exit
             alias nvim="nix run github:ElrohirGT/ConfigurationFiles#vim"
           '';
         };

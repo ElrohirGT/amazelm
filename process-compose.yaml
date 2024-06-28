@@ -1,0 +1,14 @@
+version: "0.5"
+
+processes:
+  compilation:
+    description: Recompiles the ELM application everytime the srouce code changes
+    command: find src/ | entr -s 'elm make src/Main.elm'
+    ready_log_line: "Success!"
+
+  hot-reloading:
+    description: Serves and reloads a webpage with the compiled ELM app.
+    command: live-server --entry-file=index.html
+    depends_on:
+      compilation:
+        condition: process_log_ready

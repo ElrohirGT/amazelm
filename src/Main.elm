@@ -1,9 +1,12 @@
-module Main exposing (Model, Msg(..), init, main, subscriptions, update, view, viewLink)
+module Main exposing (Model, Msg(..), init, main, subscriptions, update, view)
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html
+import Pages.Details as DetailsPage
+import Pages.Home as HomePage
+import Pages.NotFound as NotFoundPage
+import Routing exposing (Route(..))
 import Url
 
 
@@ -29,13 +32,14 @@ main =
 
 type alias Model =
     { key : Nav.Key
-    , url : Url.Url
+    , route : Route
+    , home : HomePage.Model
     }
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-    ( Model key url, Cmd.none )
+init _ url navKey =
+    ( Model navKey (Routing.parseUrl url) HomePage.init, Cmd.none )
 
 
 
@@ -45,6 +49,7 @@ init flags url key =
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
+    | HomeMsg HomePage.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -59,9 +64,16 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | url = url }
+            ( { model | route = Routing.parseUrl url }
             , Cmd.none
             )
+
+        HomeMsg mg ->
+            let
+                ( newModel, command ) =
+                    HomePage.update mg model.home
+            in
+            ( { model | home = newModel }, Cmd.map HomeMsg command )
 
 
 
@@ -79,21 +91,31 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "URL Interceptor"
-    , body =
-        [ text "The current URL is: "
-        , b [] [ text (Url.toString model.url) ]
-        , ul []
-            [ viewLink "/home"
-            , viewLink "/profile"
-            , viewLink "/reviews/the-century-of-the-self"
-            , viewLink "/reviews/public-opinion"
-            , viewLink "/reviews/shah-of-shahs"
-            ]
-        ]
-    }
+    let
+        viewPage page pageModel toMsg =
+            let
+                { title, body } =
+                    page pageModel
+            in
+            { title = title
+            , body = List.map (Html.map toMsg) body
+            }
+    in
+    case model.route of
+        Home ->
+            viewPage HomePage.view model.home HomeMsg
+
+        Details id ->
+            DetailsPage.view model
+
+        ShoppingCart id ->
+            DetailsPage.view model
+
+        NotFound ->
+            NotFoundPage.view model
 
 
-viewLink : String -> Html msg
-viewLink path =
-    li [] [ a [ href path ] [ text path ] ]
+
+-- viewLink : String -> Html msg
+-- viewLink path =
+--     li [] [ a [ href path ] [ text path ] ]
