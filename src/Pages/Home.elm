@@ -6,6 +6,7 @@ import Data.Product exposing (Product)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
 import Routing exposing (goToDetails)
+import Theme exposing (cssTheme, gaps, theme)
 
 
 
@@ -56,21 +57,47 @@ view _ =
 
 headerView : Html msg
 headerView =
+    let
+        imageStyles =
+            css
+                [ Css.width (rem 2)
+                , Css.height (rem 2)
+                ]
+    in
     div
-        [ src "help.png"
-        , css
+        [ css
             [ displayFlex
             , justifyContent spaceBetween
+            , alignItems center
             , padding (rem 1)
+            , backgroundColor cssTheme.background
+            , color cssTheme.white
             ]
         ]
-        [ div []
-            [ img [] []
-            , img [] []
+        [ div
+            [ css
+                [ displayFlex
+                ]
             ]
-        , div []
-            [ text "ElrohirGT"
-            , img [] []
-            , img [] []
+            [ img
+                [ imageStyles
+                ]
+                []
+            , img
+                [ imageStyles
+                ]
+                []
+            ]
+        , div
+            [ css
+                [ displayFlex
+                , alignItems center
+                , Css.property "gap" gaps.s
+                , fontFamilies [ "Inter", "sans-serif" ]
+                ]
+            ]
+            [ p [] [ text "ElrohirGT" ]
+            , img [ imageStyles ] []
+            , img [ imageStyles ] []
             ]
         ]
