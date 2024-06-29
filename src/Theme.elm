@@ -8,6 +8,7 @@ theme =
     , lightBackground = "#364759"
     , primary = "#146eb4"
     , secondary = "#ff9900"
+    , lightSecondary = "#FFB84D"
     , black = "#000"
     , white = "#fff"
     , onWhite = "#858585"
@@ -20,6 +21,7 @@ cssTheme =
     , lightBackground = hex (String.dropLeft 1 theme.lightBackground)
     , primary = hex (String.dropLeft 1 theme.primary)
     , secondary = hex (String.dropLeft 1 theme.secondary)
+    , lightSecondary = hex (String.dropLeft 1 theme.lightSecondary)
     , black = hex (String.dropLeft 1 theme.black)
     , white = hex (String.dropLeft 1 theme.white)
     , onWhite = hex (String.dropLeft 1 theme.onWhite)
@@ -27,7 +29,7 @@ cssTheme =
     }
 
 
-{-| The gaps used on the system!
+{-| The gaps used on the webpage
 -}
 gaps =
     { xs = "0.2rem"

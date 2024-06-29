@@ -57,10 +57,9 @@ update msg model =
 
 
 -- VIEW
--- view : Model -> Browser.Document Msg
 
 
-view : Model -> { title : String, body : List (Html msg) }
+view : Model -> { title : String, body : List (Html Msg) }
 view _ =
     { title = "Amazelm"
     , body =
@@ -71,7 +70,7 @@ view _ =
     }
 
 
-headerView : Html msg
+headerView : Html Msg
 headerView =
     let
         iconStyles =
@@ -83,60 +82,103 @@ headerView =
     div
         [ css
             [ displayFlex
-            , justifyContent spaceBetween
-            , alignItems center
-            , padding cssGaps.s
+            , flexDirection column
             , backgroundColor cssTheme.background
-            , color cssTheme.white
+            , padding cssGaps.s
             ]
         ]
         [ div
             [ css
                 [ displayFlex
+                , justifyContent spaceBetween
                 , alignItems center
+                , color cssTheme.white
                 ]
             ]
-            [ img
-                [ iconStyles
-                , Imgs.Hamburguer
-                    |> Imgs.Icon
-                    |> Imgs.toString
-                    |> src
-                ]
-                []
-            , img
+            [ div
                 [ css
-                    [ Css.height (rem 2.5)
+                    [ displayFlex
+                    , alignItems center
                     ]
-                , Imgs.Logo
-                    |> Imgs.toString
-                    |> src
                 ]
-                []
+                [ img
+                    [ iconStyles
+                    , Imgs.Hamburguer
+                        |> Imgs.Icon
+                        |> Imgs.toString
+                        |> src
+                    ]
+                    []
+                , img
+                    [ css
+                        [ Css.height (rem 2.5)
+                        ]
+                    , Imgs.Logo
+                        |> Imgs.toString
+                        |> src
+                    ]
+                    []
+                ]
+            , div
+                [ css
+                    [ displayFlex
+                    , alignItems center
+                    , Css.property "gap" gaps.xs
+                    ]
+                ]
+                [ p [ css [ fontFamilies Theme.fontFamilies.text ] ] [ text "ElrohirGT" ]
+                , img
+                    [ iconStyles
+                    , Imgs.User
+                        |> Imgs.Icon
+                        |> Imgs.toString
+                        |> src
+                    ]
+                    []
+                , img
+                    [ iconStyles
+                    , Imgs.Cart
+                        |> Imgs.Icon
+                        |> Imgs.toString
+                        |> src
+                    ]
+                    []
+                ]
             ]
         , div
             [ css
                 [ displayFlex
-                , alignItems center
-                , Css.property "gap" gaps.xs
+                , backgroundColor cssTheme.white
+                , borderRadius cssGaps.xs
                 ]
             ]
-            [ p [ css [ fontFamilies Theme.fontFamilies.text ] ] [ text "ElrohirGT" ]
-            , img
-                [ iconStyles
-                , Imgs.User
-                    |> Imgs.Icon
-                    |> Imgs.toString
-                    |> src
+            [ input
+                [ css
+                    [ flexGrow (num 1)
+                    , border zero
+                    , borderRadius cssGaps.xs
+                    , padding2 zero cssGaps.s
+                    ]
+                , placeholder "Buscar en Amazon"
                 ]
                 []
-            , img
-                [ iconStyles
-                , Imgs.Cart
-                    |> Imgs.Icon
-                    |> Imgs.toString
-                    |> src
+            , button
+                [ css
+                    [ padding cssGaps.xs
+                    , border zero
+                    , backgroundColor cssTheme.lightSecondary
+                    , borderRadius cssGaps.xs
+                    , position relative
+                    ]
                 ]
-                []
+                [ img
+                    [ iconStyles
+                    , Imgs.Search
+                        |> Imgs.Icon
+                        |> Imgs.toString
+                        |> src
+                    ]
+                    []
+                ]
             ]
         ]
