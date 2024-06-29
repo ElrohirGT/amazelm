@@ -3,12 +3,13 @@ version: "0.5"
 processes:
   compilation:
     description: Recompiles the ELM application everytime the source code changes
-    command: find src/ | entr -n elm make src/Main.elm
+    command: find src/ | entr -n elm make src/Main.elm --output=dist/elm.js
     ready_log_line: "Success!"
 
   hot-reloading:
     description: Serves and reloads a webpage with the compiled ELM app.
-    command: live-server --entry-file=index.html
+    working_dir: dist
+    command: live-server
     depends_on:
       compilation:
         condition: process_log_ready

@@ -30,9 +30,9 @@ cssTheme =
 {-| The gaps used on the system!
 -}
 gaps =
-    { xs = "0.1rem"
-    , s = "0.5rem"
-    , m = "1rem"
+    { xs = "0.2rem"
+    , s = "0.8rem"
+    , m = "1.5rem"
     , l = "2rem"
     , xl = "3rem"
     }
@@ -46,4 +46,13 @@ cssGaps =
     , m = rem (Maybe.withDefault 0.0 (String.toFloat (String.dropRight 3 gaps.m)))
     , l = rem (Maybe.withDefault 0.0 (String.toFloat (String.dropRight 3 gaps.l)))
     , xl = rem (Maybe.withDefault 0.0 (String.toFloat (String.dropRight 3 gaps.xl)))
+    }
+
+
+{-| The fonts used on the website for each type of text
+-}
+fontFamilies =
+    { titles = [ "Inter", "sans-serif" ]
+    , subtitles = [ "Inter", "sans-serif" ]
+    , text = [ "Inter", "sans-serif" ]
     }
