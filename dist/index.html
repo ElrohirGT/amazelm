@@ -19,9 +19,10 @@
 	<script src="elm.js"></script>
 	<script>
 		const loc = window.location.pathname;
-		const bUrl = loc === "/" ? null : loc;
+		const bPath = loc === "/" ? null : loc;
+		console.log(`The supplied base path is: ${bPath}`)
 		Elm.Main.init({
-			flags: bUrl
+			flags: bPath
 		});
 	</script>
 </body>
