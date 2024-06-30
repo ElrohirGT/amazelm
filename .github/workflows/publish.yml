@@ -24,6 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - uses: actions/configure-pages@v4
       - name: Building frontend
         # yamllint disable-line rule:line-length
