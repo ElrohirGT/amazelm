@@ -11,6 +11,8 @@ type SiteIcon
     | Search
     | Cart
     | User
+    | DownArrow
+    | Destination
 
 
 {-| Represents all static images in the site
@@ -27,13 +29,19 @@ toString img =
             "imgs/AmazonLogo.png"
 
         Icon Hamburguer ->
-            "imgs/icons/hamburguer.svg"
+            "imgs/icons/Hamburguer.svg"
 
         Icon Search ->
-            "imgs/icons/search.svg"
+            "imgs/icons/Search.svg"
 
         Icon Cart ->
-            "imgs/icons/cart.svg"
+            "imgs/icons/Cart.svg"
 
         Icon User ->
-            "imgs/icons/user.svg"
+            "imgs/icons/User.svg"
+
+        Icon DownArrow ->
+            "imgs/icons/DownArrow.svg"
+
+        Icon Destination ->
+            "imgs/icons/Destination.svg"

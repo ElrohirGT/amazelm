@@ -58,3 +58,13 @@ fontFamilies =
     , subtitles = [ "Inter", "sans-serif" ]
     , text = [ "Inter", "sans-serif" ]
     }
+
+
+{-| The font sizes to use in the application
+-}
+fontSizes =
+    { titles = Css.xLarge
+    , subtitles = Css.large
+    , bigText = Css.medium
+    , text = Css.small
+    }
