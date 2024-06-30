@@ -15,7 +15,7 @@ import Url
 -- MAIN
 
 
-main : Program () Model Msg
+main : Program Flags Model Msg
 main =
     Browser.application
         { init = init
@@ -33,14 +33,19 @@ main =
 
 type alias Model =
     { key : Nav.Key
+    , basePath : Maybe String
     , route : Route
     , home : HomePage.Model
     }
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url navKey =
-    ( Model navKey (Routing.parseUrl url) HomePage.init, Cmd.none )
+type alias Flags =
+    Maybe String
+
+
+init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init basePath url navKey =
+    ( Model navKey basePath (Routing.parseUrl basePath url) HomePage.init, Cmd.none )
 
 
 
@@ -65,7 +70,7 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | route = Routing.parseUrl url }
+            ( { model | route = Routing.parseUrl model.basePath url }
             , Cmd.none
             )
 

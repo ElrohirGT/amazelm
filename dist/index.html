@@ -18,7 +18,11 @@
 <body>
 	<script src="elm.js"></script>
 	<script>
-		Elm.Main.init();
+		const loc = window.location.pathname;
+		const bUrl = loc === "/" ? null : loc;
+		Elm.Main.init({
+			flags: bUrl
+		});
 	</script>
 </body>
 

@@ -13,17 +13,30 @@ type Route
     | NotFound
 
 
-routeParser : Parser (Route -> a) a
-routeParser =
-    P.oneOf
-        [ P.map Home P.top
-        , P.map Details (s "details" </> P.int)
-        , P.map ShoppingCart (s "cart" </> P.int)
-        ]
+genRouteParser : Maybe String -> Parser (Route -> a) a
+genRouteParser maybeBasePath =
+    case maybeBasePath of
+        Just basePath ->
+            P.oneOf
+                [ P.map Home (s basePath </> P.top)
+                , P.map Details (s basePath </> s "details" </> P.int)
+                , P.map ShoppingCart (s basePath </> s "cart" </> P.int)
+                ]
+
+        Nothing ->
+            P.oneOf
+                [ P.map Home P.top
+                , P.map Details (s "details" </> P.int)
+                , P.map ShoppingCart (s "cart" </> P.int)
+                ]
 
 
-parseUrl : Url -> Route
-parseUrl url =
+parseUrl : Maybe String -> Url -> Route
+parseUrl basePath url =
+    let
+        routeParser =
+            genRouteParser basePath
+    in
     case P.parse routeParser url of
         Just a ->
             a
