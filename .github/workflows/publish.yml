@@ -1,0 +1,36 @@
+---
+name: Deploy Amazelm
+on:  
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+
+  frontendDeploy:
+    name: Build and Deploy
+    environment:
+      name: build
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: nix develop --command bash {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/configure-pages@v4
+      - name: Building frontend
+        # yamllint disable-line rule:line-length
+        run: elm make src/Main.elm --output=dist/elm.js
+      - name: Uploading to Github pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v4
+        id: deployment
