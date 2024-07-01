@@ -8,6 +8,7 @@ import Pages.Details as DetailsPage
 import Pages.Home as HomePage
 import Pages.NotFound as NotFoundPage
 import Routing exposing (Route(..))
+import Time
 import Url
 
 
@@ -87,8 +88,8 @@ update msg model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    Sub.map HomeMsg (HomePage.subscriptions model.home)
 
 
 
