@@ -1,6 +1,7 @@
 module Theme exposing (..)
 
 import Css exposing (hex, rem)
+import FormatNumber.Locales exposing (Decimals(..), usLocale)
 
 
 theme =
@@ -10,6 +11,7 @@ theme =
     , secondary = "#ff9900"
     , lightSecondary = "#FFB84D"
     , black = "#000"
+    , shadows = "#c1c1c1"
     , white = "#fff"
     , onWhite = "#858585"
     , correctColor = "#00c04b"
@@ -23,9 +25,16 @@ cssTheme =
     , secondary = hex (String.dropLeft 1 theme.secondary)
     , lightSecondary = hex (String.dropLeft 1 theme.lightSecondary)
     , black = hex (String.dropLeft 1 theme.black)
+    , shadows = hex (String.dropLeft 1 theme.shadows)
     , white = hex (String.dropLeft 1 theme.white)
     , onWhite = hex (String.dropLeft 1 theme.onWhite)
     , correctColor = hex (String.dropLeft 1 theme.correctColor)
+    }
+
+
+locale =
+    { usLocale
+        | decimals = Exact 2
     }
 
 
