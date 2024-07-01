@@ -1,7 +1,7 @@
 module Data.Product exposing (..)
 
 import Json.Decode as Decode exposing (Decoder, float, int, list, string)
-import Json.Decode.Pipeline exposing (required)
+import Json.Decode.Pipeline exposing (optional, required)
 
 
 type alias Product =
@@ -30,6 +30,6 @@ productDecoder =
         |> required "rating" float
         |> required "discountPercentage" float
         |> required "stock" int
-        |> required "brand" string
+        |> optional "brand" string ""
         |> required "thumbnail" string
         |> required "images" (list string)

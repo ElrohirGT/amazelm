@@ -13,6 +13,7 @@ type SiteIcon
     | User
     | DownArrow
     | Destination
+    | AddToCart
 
 
 {-| Represents all static images in the site
@@ -22,6 +23,10 @@ type Images
     | Icon SiteIcon
 
 
+logoToString name =
+    String.concat [ "imgs/icons/", name ]
+
+
 toString : Images -> String
 toString img =
     case img of
@@ -29,19 +34,22 @@ toString img =
             "imgs/AmazonLogo.png"
 
         Icon Hamburguer ->
-            "imgs/icons/Hamburguer.svg"
+            logoToString "Hamburguer.svg"
 
         Icon Search ->
-            "imgs/icons/Search.svg"
+            logoToString "Search.svg"
 
         Icon Cart ->
-            "imgs/icons/Cart.svg"
+            logoToString "Cart.svg"
 
         Icon User ->
-            "imgs/icons/User.svg"
+            logoToString "User.svg"
 
         Icon DownArrow ->
-            "imgs/icons/DownArrow.svg"
+            logoToString "DownArrow.svg"
 
         Icon Destination ->
-            "imgs/icons/Destination.svg"
+            logoToString "Destination.svg"
+
+        Icon AddToCart ->
+            logoToString "AddToCart.svg"

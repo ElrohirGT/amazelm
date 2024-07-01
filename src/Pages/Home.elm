@@ -24,20 +24,22 @@ sampleResponse =
 
 type alias Model =
     { products : Result Json.Decode.Error (List Product)
+    , currentProduct : Maybe Product
     }
 
 
 init : Model
 init =
-    let
-        extractor response =
-            response.products
-    in
-    { products =
-        Result.map
-            extractor
-            (decodeString getProductsResponseDecoder sampleResponse)
-    }
+    case decodeString getProductsResponseDecoder sampleResponse of
+        Ok response ->
+            { products = Ok response.products
+            , currentProduct = List.head response.products
+            }
+
+        Err e ->
+            { products = Err e
+            , currentProduct = Nothing
+            }
 
 
 
@@ -60,14 +62,177 @@ update msg model =
 
 
 view : Model -> { title : String, body : List (Html Msg) }
-view _ =
+view model =
     { title = "Amazelm"
     , body =
-        [ div []
-            [ headerView
-            ]
-        ]
+        case model.products of
+            Err e ->
+                [ h1 [] [ text (Debug.toString e) ] ]
+
+            Ok ps ->
+                [ div []
+                    [ headerView
+                    , carrouselView model.currentProduct
+                    ]
+                ]
     }
+
+
+carrouselView : Maybe Product -> Html Msg
+carrouselView pr =
+    case pr of
+        Nothing ->
+            div [] [ h1 [] [ text "No product loaded!" ] ]
+
+        Just product ->
+            div
+                [ css
+                    [ padding cssGaps.s
+                    ]
+                ]
+                [ h1
+                    [ css
+                        [ fontFamilies Theme.fontFamilies.titles
+                        , fontSize fontSizes.titles
+                        ]
+                    ]
+                    [ text "Basado en lo que compras" ]
+                , div
+                    [ css
+                        [ displayFlex
+                        , justifyContent spaceAround
+                        , Css.width (pct 100)
+                        ]
+                    ]
+                    [ img
+                        [ src product.thumbnail
+                        , css
+                            [ Css.width (pct 70)
+                            ]
+                        ]
+                        []
+                    , div
+                        [ css
+                            [ flexGrow (Css.num 1)
+                            , displayFlex
+                            , flexDirection column
+                            , Css.property "gap" gaps.s
+                            ]
+                        ]
+                        [ div
+                            [ css
+                                [ displayFlex
+                                , justifyContent spaceBetween
+                                , padding2 zero cssGaps.s
+                                ]
+                            ]
+                            [ div
+                                [ css
+                                    [ Css.property "display" "inline-flex"
+                                    , alignItems Css.start
+                                    , alignSelf center
+                                    ]
+                                ]
+                                [ p
+                                    [ css
+                                        [ fontSize fontSizes.text
+                                        , fontFamilies Theme.fontFamilies.text
+                                        , alignSelf Css.start
+                                        ]
+                                    ]
+                                    [ text "$" ]
+                                , p
+                                    [ css
+                                        [ fontSize fontSizes.titles
+                                        , fontFamilies Theme.fontFamilies.text
+                                        ]
+                                    ]
+                                    [ text (String.fromInt (Basics.floor product.price)) ]
+                                , p
+                                    [ css
+                                        [ fontSize fontSizes.text
+                                        , fontFamilies Theme.fontFamilies.text
+                                        , alignSelf Css.start
+                                        ]
+                                    ]
+                                    [ text (String.fromInt (Basics.floor ((product.price - Basics.toFloat (Basics.floor product.price)) * 100))) ]
+                                ]
+                            , p
+                                [ css
+                                    [ padding cssGaps.s
+                                    , backgroundColor cssTheme.correctColor
+                                    , color cssTheme.white
+                                    , fontFamilies Theme.fontFamilies.text
+                                    ]
+                                ]
+                                [ text (String.concat [ "-", String.fromFloat product.discountPercentage, "%" ]) ]
+                            ]
+                        , div
+                            [ css
+                                [ displayFlex
+                                , flexDirection column
+                                , Css.property "gap" gaps.xs
+                                ]
+                            ]
+                            [ p
+                                [ css
+                                    [ fontSize fontSizes.text
+                                    , color cssTheme.onWhite
+                                    , fontFamilies Theme.fontFamilies.text
+                                    ]
+                                ]
+                                [ text (String.concat [ "$ ", String.fromFloat (product.price * 1.1), " Shipping & Import Charges" ]) ]
+                            , p
+                                [ css
+                                    [ fontSize fontSizes.text
+                                    , fontFamilies Theme.fontFamilies.text
+                                    ]
+                                ]
+                                [ text "Delivery "
+                                , span
+                                    [ css
+                                        [ fontWeight bold
+                                        ]
+                                    ]
+                                    [ text "Monday, June 24" ]
+                                ]
+                            ]
+                        , select
+                            [ css
+                                [ backgroundColor cssTheme.white
+                                , border zero
+                                , padding cssGaps.xs
+                                , boxShadow4 (px 4) (px 4) (px 4) cssTheme.lightBackground
+                                ]
+                            ]
+                            [ option
+                                [ css
+                                    []
+                                ]
+                                [ text "Quantity: 1" ]
+                            ]
+                        , button
+                            [ css
+                                [ backgroundColor cssTheme.primary
+                                , border zero
+                                , padding2 cssGaps.s cssGaps.m
+                                ]
+                            ]
+                            [ img
+                                [ Imgs.AddToCart
+                                    |> Imgs.Icon
+                                    |> Imgs.toString
+                                    |> src
+                                , css
+                                    [ Css.width cssGaps.m
+                                    , Css.height cssGaps.m
+                                    ]
+                                ]
+                                []
+                            ]
+                        ]
+                    ]
+                ]
 
 
 headerView : Html Msg
