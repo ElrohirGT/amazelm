@@ -33,23 +33,22 @@ type alias CarrouselModel =
 
 
 type alias Model =
-    { products : Result Json.Decode.Error (List Product)
-    , carrousel : Result Json.Decode.Error CarrouselModel
-    }
+    Result
+        Json.Decode.Error
+        { products : List Product
+        , carrousel : CarrouselModel
+        }
 
 
 init : Model
 init =
-    case decodeString getProductsResponseDecoder sampleResponse of
-        Ok response ->
-            { products = Ok response.products
-            , carrousel = Ok (CarrouselModel (Array.fromList (List.take 5 response.products)) 0)
+    let
+        responseMapper response =
+            { products = response.products
+            , carrousel = CarrouselModel (Array.fromList (List.take 5 response.products)) 0
             }
-
-        Err e ->
-            { products = Err e
-            , carrousel = Err e
-            }
+    in
+    Result.map responseMapper (decodeString getProductsResponseDecoder sampleResponse)
 
 
 
@@ -62,18 +61,23 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg resModel =
     case msg of
         TickCarrousel ->
-            ( model, Cmd.none )
+            ( resModel, Cmd.none )
 
         MoveCarrousel idx ->
-            case model.carrousel of
-                Ok carr ->
-                    ( { model | carrousel = Ok { carr | currentIndex = idx } }, Cmd.none )
-
-                Err e ->
-                    ( model, Cmd.none )
+            let
+                mapper model =
+                    let
+                        carrousel =
+                            model.carrousel
+                    in
+                    { model
+                        | carrousel = { carrousel | currentIndex = idx }
+                    }
+            in
+            ( Result.map mapper resModel, Cmd.none )
 
 
 
@@ -81,14 +85,14 @@ update msg model =
 
 
 view : Model -> { title : String, body : List (Html Msg) }
-view model =
+view resModel =
     { title = "Amazelm"
     , body =
-        case model.products of
+        case resModel of
             Err e ->
                 [ h1 [] [ text (Debug.toString e) ] ]
 
-            Ok ps ->
+            Ok model ->
                 [ div []
                     [ headerView
                     , carrouselView model.carrousel
@@ -97,190 +101,185 @@ view model =
     }
 
 
-carrouselView : Result Json.Decode.Error CarrouselModel -> Html Msg
-carrouselView pr =
-    case pr of
-        Err e ->
-            div [] [ h1 [] [ text (Debug.toString e) ] ]
+carrouselView : CarrouselModel -> Html Msg
+carrouselView model =
+    let
+        maybeProduct =
+            Array.get model.currentIndex model.products
+    in
+    case maybeProduct of
+        Nothing ->
+            div [] [ h1 [] [ text "Invalid index!" ] ]
 
-        Ok model ->
-            let
-                maybeProduct =
-                    Array.get model.currentIndex model.products
-            in
-            case maybeProduct of
-                Nothing ->
-                    div [] [ h1 [] [ text "Invalid index!" ] ]
-
-                Just product ->
-                    div
+        Just product ->
+            div
+                [ css
+                    [ padding cssGaps.s
+                    , displayFlex
+                    , flexDirection column
+                    , Css.property "gap" gaps.s
+                    ]
+                ]
+                [ h1
+                    [ css
+                        [ fontFamilies Theme.fontFamilies.titles
+                        , fontSize fontSizes.titles
+                        ]
+                    ]
+                    [ text "Basado en lo que compras" ]
+                , div
+                    [ css
+                        [ displayFlex
+                        , justifyContent spaceAround
+                        , Css.width (pct 100)
+                        , Css.property "gap" gaps.s
+                        ]
+                    ]
+                    [ img
+                        [ src product.thumbnail
+                        , css
+                            [ Css.width (pct 45)
+                            , Css.property "aspect-ratio" "1/1"
+                            , Css.property "object-fit" "cover"
+                            ]
+                        ]
+                        []
+                    , div
                         [ css
-                            [ padding cssGaps.s
+                            [ Css.width (pct 55)
                             , displayFlex
                             , flexDirection column
                             , Css.property "gap" gaps.s
                             ]
                         ]
-                        [ h1
+                        [ div
                             [ css
-                                [ fontFamilies Theme.fontFamilies.titles
-                                , fontSize fontSizes.titles
+                                [ displayFlex
+                                , justifyContent spaceBetween
+                                , padding2 zero cssGaps.s
                                 ]
                             ]
-                            [ text "Basado en lo que compras" ]
+                            [ div
+                                [ css
+                                    [ Css.property "display" "inline-flex"
+                                    , alignItems Css.start
+                                    , alignSelf center
+                                    ]
+                                ]
+                                [ p
+                                    [ css
+                                        [ fontSize fontSizes.text
+                                        , fontFamilies Theme.fontFamilies.text
+                                        , alignSelf Css.start
+                                        ]
+                                    ]
+                                    [ text "$" ]
+                                , p
+                                    [ css
+                                        [ fontSize fontSizes.titles
+                                        , fontFamilies Theme.fontFamilies.text
+                                        ]
+                                    ]
+                                    [ text (String.fromInt (Basics.floor product.price)) ]
+                                , p
+                                    [ css
+                                        [ fontSize fontSizes.text
+                                        , fontFamilies Theme.fontFamilies.text
+                                        , alignSelf Css.start
+                                        ]
+                                    ]
+                                    [ text (String.fromInt (Basics.floor ((product.price - Basics.toFloat (Basics.floor product.price)) * 100))) ]
+                                ]
+                            , p
+                                [ css
+                                    [ padding cssGaps.s
+                                    , backgroundColor cssTheme.correctColor
+                                    , color cssTheme.white
+                                    , fontFamilies Theme.fontFamilies.text
+                                    ]
+                                ]
+                                [ text (String.concat [ "-", String.fromFloat product.discountPercentage, "%" ]) ]
+                            ]
                         , div
                             [ css
                                 [ displayFlex
-                                , justifyContent spaceAround
-                                , Css.width (pct 100)
-                                , Css.property "gap" gaps.s
+                                , flexDirection column
+                                , Css.property "gap" gaps.xs
+                                ]
+                            ]
+                            [ p
+                                [ css
+                                    [ fontSize fontSizes.text
+                                    , color cssTheme.onWhite
+                                    , fontFamilies Theme.fontFamilies.text
+                                    ]
+                                ]
+                                (let
+                                    shippingPrice =
+                                        product.price * 1.1
+                                 in
+                                 [ text (String.concat [ "$ ", format locale shippingPrice, " Shipping & Import Charges" ]) ]
+                                )
+                            , p
+                                [ css
+                                    [ fontSize fontSizes.text
+                                    , fontFamilies Theme.fontFamilies.text
+                                    ]
+                                ]
+                                [ text "Delivery "
+                                , span
+                                    [ css
+                                        [ fontWeight bold
+                                        ]
+                                    ]
+                                    [ text "Monday, June 24" ]
+                                ]
+                            ]
+                        , select
+                            [ css
+                                [ backgroundColor cssTheme.white
+                                , border zero
+                                , padding cssGaps.xs
+                                , boxShadow4 (px 4) (px 4) (px 4) cssTheme.shadows
+                                ]
+                            ]
+                            [ option
+                                [ css
+                                    []
+                                ]
+                                [ text "Quantity: 1" ]
+                            ]
+                        , button
+                            [ css
+                                [ backgroundColor cssTheme.primary
+                                , border zero
+                                , padding2 cssGaps.s cssGaps.m
                                 ]
                             ]
                             [ img
-                                [ src product.thumbnail
+                                [ Imgs.AddToCart
+                                    |> Imgs.Icon
+                                    |> Imgs.toString
+                                    |> src
                                 , css
-                                    [ Css.width (pct 45)
-                                    , Css.property "aspect-ratio" "1/1"
-                                    , Css.property "object-fit" "cover"
+                                    [ Css.width cssGaps.m
+                                    , Css.height cssGaps.m
                                     ]
                                 ]
                                 []
-                            , div
-                                [ css
-                                    [ Css.width (pct 55)
-                                    , displayFlex
-                                    , flexDirection column
-                                    , Css.property "gap" gaps.s
-                                    ]
-                                ]
-                                [ div
-                                    [ css
-                                        [ displayFlex
-                                        , justifyContent spaceBetween
-                                        , padding2 zero cssGaps.s
-                                        ]
-                                    ]
-                                    [ div
-                                        [ css
-                                            [ Css.property "display" "inline-flex"
-                                            , alignItems Css.start
-                                            , alignSelf center
-                                            ]
-                                        ]
-                                        [ p
-                                            [ css
-                                                [ fontSize fontSizes.text
-                                                , fontFamilies Theme.fontFamilies.text
-                                                , alignSelf Css.start
-                                                ]
-                                            ]
-                                            [ text "$" ]
-                                        , p
-                                            [ css
-                                                [ fontSize fontSizes.titles
-                                                , fontFamilies Theme.fontFamilies.text
-                                                ]
-                                            ]
-                                            [ text (String.fromInt (Basics.floor product.price)) ]
-                                        , p
-                                            [ css
-                                                [ fontSize fontSizes.text
-                                                , fontFamilies Theme.fontFamilies.text
-                                                , alignSelf Css.start
-                                                ]
-                                            ]
-                                            [ text (String.fromInt (Basics.floor ((product.price - Basics.toFloat (Basics.floor product.price)) * 100))) ]
-                                        ]
-                                    , p
-                                        [ css
-                                            [ padding cssGaps.s
-                                            , backgroundColor cssTheme.correctColor
-                                            , color cssTheme.white
-                                            , fontFamilies Theme.fontFamilies.text
-                                            ]
-                                        ]
-                                        [ text (String.concat [ "-", String.fromFloat product.discountPercentage, "%" ]) ]
-                                    ]
-                                , div
-                                    [ css
-                                        [ displayFlex
-                                        , flexDirection column
-                                        , Css.property "gap" gaps.xs
-                                        ]
-                                    ]
-                                    [ p
-                                        [ css
-                                            [ fontSize fontSizes.text
-                                            , color cssTheme.onWhite
-                                            , fontFamilies Theme.fontFamilies.text
-                                            ]
-                                        ]
-                                        (let
-                                            shippingPrice =
-                                                product.price * 1.1
-                                         in
-                                         [ text (String.concat [ "$ ", format locale shippingPrice, " Shipping & Import Charges" ]) ]
-                                        )
-                                    , p
-                                        [ css
-                                            [ fontSize fontSizes.text
-                                            , fontFamilies Theme.fontFamilies.text
-                                            ]
-                                        ]
-                                        [ text "Delivery "
-                                        , span
-                                            [ css
-                                                [ fontWeight bold
-                                                ]
-                                            ]
-                                            [ text "Monday, June 24" ]
-                                        ]
-                                    ]
-                                , select
-                                    [ css
-                                        [ backgroundColor cssTheme.white
-                                        , border zero
-                                        , padding cssGaps.xs
-                                        , boxShadow4 (px 4) (px 4) (px 4) cssTheme.shadows
-                                        ]
-                                    ]
-                                    [ option
-                                        [ css
-                                            []
-                                        ]
-                                        [ text "Quantity: 1" ]
-                                    ]
-                                , button
-                                    [ css
-                                        [ backgroundColor cssTheme.primary
-                                        , border zero
-                                        , padding2 cssGaps.s cssGaps.m
-                                        ]
-                                    ]
-                                    [ img
-                                        [ Imgs.AddToCart
-                                            |> Imgs.Icon
-                                            |> Imgs.toString
-                                            |> src
-                                        , css
-                                            [ Css.width cssGaps.m
-                                            , Css.height cssGaps.m
-                                            ]
-                                        ]
-                                        []
-                                    ]
-                                ]
                             ]
-                        , div
-                            [ css
-                                [ displayFlex
-                                , alignItems center
-                                , justifyContent center
-                                , Css.property "gap" gaps.s
-                                ]
-                            ]
-                            (displayPoints model.currentIndex (Array.length model.products) 0)
                         ]
+                    ]
+                , div
+                    [ css
+                        [ displayFlex
+                        , alignItems center
+                        , justifyContent center
+                        , Css.property "gap" gaps.s
+                        ]
+                    ]
+                    (displayPoints model.currentIndex (Array.length model.products) 0)
+                ]
 
 
 displayPoints : Int -> Int -> Int -> List (Html Msg)
