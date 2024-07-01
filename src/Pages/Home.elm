@@ -4,6 +4,7 @@ import Api.Products exposing (GetProductsResponse, getProductsResponseDecoder)
 import Array exposing (Array)
 import Browser
 import Css exposing (..)
+import Css.Media exposing (aspectRatio, ratio)
 import Data.Product exposing (Product)
 import FormatNumber exposing (format)
 import Html.Styled exposing (..)
@@ -132,18 +133,21 @@ carrouselView pr =
                                 [ displayFlex
                                 , justifyContent spaceAround
                                 , Css.width (pct 100)
+                                , Css.property "gap" gaps.s
                                 ]
                             ]
                             [ img
                                 [ src product.thumbnail
                                 , css
-                                    [ Css.width (pct 40)
+                                    [ Css.width (pct 45)
+                                    , Css.property "aspect-ratio" "1/1"
+                                    , Css.property "object-fit" "cover"
                                     ]
                                 ]
                                 []
                             , div
                                 [ css
-                                    [ Css.width (pct 60)
+                                    [ Css.width (pct 55)
                                     , displayFlex
                                     , flexDirection column
                                     , Css.property "gap" gaps.s
