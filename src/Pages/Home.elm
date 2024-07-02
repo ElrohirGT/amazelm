@@ -160,14 +160,12 @@ view resModel =
 categoriesView : CategoriesModel -> Html Msg
 categoriesView model =
     div
-        [ css
-            [ padding cssGaps.s
-            ]
-        ]
+        []
         [ h1
             [ css
                 [ fontFamilies Theme.fontFamilies.titles
                 , fontSize fontSizes.titles
+                , padding cssGaps.s
                 ]
             ]
             [ text "Categorías" ]
