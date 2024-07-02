@@ -76,10 +76,10 @@ init =
             , carrousel = CarrouselModel (Array.fromList (List.take 5 response.products)) 0
             , keepBuying = KeepBuyingModel (List.map keepBuyingMapper (List.take 4 (List.drop 5 response.products)))
             , categories =
-                [ { name = "Automóviles", color = hex "0800BC", icon = Imgs.Cart }
-                , { name = "Bebés", color = hex "E02667", icon = Imgs.Cart }
-                , { name = "Libros", color = hex "FF671E", icon = Imgs.Cart }
-                , { name = "Manualidades", color = hex "FFBF00", icon = Imgs.Cart }
+                [ { name = "Automóviles", color = hex "0800BC", icon = Imgs.Car }
+                , { name = "Bebés", color = hex "E02667", icon = Imgs.Baby }
+                , { name = "Libros", color = hex "FF671E", icon = Imgs.Books }
+                , { name = "Manualidades", color = hex "FFBF00", icon = Imgs.Brush }
                 ]
             }
     in
@@ -177,7 +177,7 @@ categoriesView model =
                 , flexDirection column
                 ]
             ]
-            (displayCategories model)
+            (displayCategories model True)
         , p
             [ css
                 [ fontFamilies Theme.fontFamilies.text
@@ -192,8 +192,8 @@ categoriesView model =
         ]
 
 
-displayCategories : CategoriesModel -> List (Html Msg)
-displayCategories model =
+displayCategories : CategoriesModel -> Bool -> List (Html Msg)
+displayCategories model iconLeft =
     case model of
         [] ->
             []
@@ -204,7 +204,7 @@ displayCategories model =
                         [ css
                             [ position relative
                             , backgroundColor current.color
-                            , padding cssGaps.l
+                            , padding cssGaps.xl
                             ]
                         ]
                         [ p
@@ -220,12 +220,24 @@ displayCategories model =
                         , img
                             [ css
                                 [ position absolute
+                                , top (pct 50)
+                                , if iconLeft then
+                                    left (pct 20)
+
+                                  else
+                                    left (pct 80)
+                                , transform (translate2 (pct -50) (pct -50))
+                                , Css.width (rem 5)
                                 ]
+                            , current.icon
+                                |> Imgs.Icon
+                                |> Imgs.toString
+                                |> src
                             ]
                             []
                         ]
                   ]
-                , displayCategories rest
+                , displayCategories rest (not iconLeft)
                 ]
 
 

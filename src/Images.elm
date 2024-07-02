@@ -14,6 +14,10 @@ type SiteIcon
     | DownArrow
     | Destination
     | AddToCart
+    | Baby
+    | Books
+    | Brush
+    | Car
 
 
 {-| Represents all static images in the site
@@ -53,3 +57,15 @@ toString img =
 
         Icon AddToCart ->
             logoToString "AddToCart.svg"
+
+        Icon Baby ->
+            logoToString "Baby.svg"
+
+        Icon Books ->
+            logoToString "Books.svg"
+
+        Icon Brush ->
+            logoToString "Brush.svg"
+
+        Icon Car ->
+            logoToString "Car.svg"
