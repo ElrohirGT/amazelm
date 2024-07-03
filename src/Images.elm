@@ -18,6 +18,7 @@ type SiteIcon
     | Books
     | Brush
     | Car
+    | UpArrow
 
 
 {-| Represents all static images in the site
@@ -69,3 +70,6 @@ toString img =
 
         Icon Car ->
             logoToString "Car.svg"
+
+        Icon UpArrow ->
+            logoToString "UpArrow.svg"

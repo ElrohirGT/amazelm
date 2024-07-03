@@ -147,14 +147,150 @@ view resModel =
                 [ h1 [] [ text (Debug.toString e) ] ]
 
             Ok model ->
-                [ div []
+                [ div
+                    [ css
+                        [ displayFlex
+                        , flexDirection column
+                        , Css.property "gap" gaps.s
+                        ]
+                    ]
                     [ headerView
                     , carrouselView model.carrousel
                     , keepBuyingView model.keepBuying
                     , categoriesView model.categories
+                    , p
+                        [ css
+                            [ fontFamilies Theme.fontFamilies.text
+                            , fontSize fontSizes.bigText
+                            , fontWeight bold
+                            , textAlign center
+                            , color cssTheme.primary
+                            , textDecoration underline
+                            ]
+                        ]
+                        [ text "Más" ]
+                    , footerView
                     ]
                 ]
     }
+
+
+footerView : Html Msg
+footerView =
+    div []
+        [ div
+            [ css
+                [ displayFlex
+                , flexDirection column
+                , alignItems center
+                , backgroundColor cssTheme.lightBackground
+                , color cssTheme.white
+                , Css.property "gap" gaps.s
+                , padding cssGaps.xs
+                ]
+            ]
+            [ img
+                [ Imgs.UpArrow
+                    |> Imgs.Icon
+                    |> Imgs.toString
+                    |> src
+                , css
+                    [ Css.width cssGaps.s
+                    , Css.height cssGaps.s
+                    ]
+                ]
+                []
+            , p
+                [ css
+                    [ fontSize fontSizes.text
+                    , fontFamilies Theme.fontFamilies.text
+                    ]
+                ]
+                [ text "INICIO DE PÁGINA" ]
+            ]
+        , div
+            [ css
+                [ Css.property "display" "grid"
+                , Css.property "grid-template-columns" "50% 50%"
+                , Css.property "gap" gaps.s
+                , backgroundColor cssTheme.background
+                , padding cssGaps.s
+                , color cssTheme.white
+                ]
+            ]
+            (List.map
+                (\s ->
+                    p
+                        [ css
+                            [ fontSize fontSizes.text
+                            , fontFamilies Theme.fontFamilies.text
+                            ]
+                        ]
+                        [ text s ]
+                )
+                [ "Inicio"
+                , "Tus pedidos"
+                , "Tus listas"
+                , "Tarjetas y listas de regalos"
+                , "Encuentra un regalo"
+                , "Tu Subscribe & Save"
+                , "Retiros y alertas de seguridad"
+                , "Vende productos en amazon"
+                , "Devoluciones"
+                , "Ayuda"
+                ]
+            )
+        , div
+            [ css
+                [ displayFlex
+                , flexDirection column
+                , alignItems center
+                , backgroundColor cssTheme.darkBackground
+                , color cssTheme.white
+                , padding cssGaps.m
+                , Css.property "gap" gaps.m
+                ]
+            ]
+            [ div
+                [ css
+                    [ displayFlex
+                    , justifyContent center
+                    , Css.property "gap" gaps.s
+                    ]
+                ]
+                [ p
+                    [ css
+                        [ fontFamilies Theme.fontFamilies.text
+                        , fontSize fontSizes.text
+                        , color cssTheme.onWhite
+                        ]
+                    ]
+                    [ text "Español" ]
+                , p
+                    [ css
+                        [ fontFamilies Theme.fontFamilies.text
+                        , fontSize fontSizes.text
+                        , color cssTheme.onWhite
+                        ]
+                    ]
+                    [ text "Estados Unidos" ]
+                ]
+            , p
+                [ css
+                    [ fontFamilies Theme.fontFamilies.text
+                    , fontSize fontSizes.bigText
+                    ]
+                ]
+                [ text "Cambiar de Cuenta" ]
+            , p
+                [ css
+                    [ fontFamilies Theme.fontFamilies.text
+                    , fontSize fontSizes.bigText
+                    ]
+                ]
+                [ text "Salir" ]
+            ]
+        ]
 
 
 categoriesView : CategoriesModel -> Html Msg
@@ -181,17 +317,6 @@ categoriesView model =
                 ]
             ]
             (displayCategories model True)
-        , p
-            [ css
-                [ fontFamilies Theme.fontFamilies.text
-                , fontSize fontSizes.bigText
-                , fontWeight bold
-                , textAlign center
-                , color cssTheme.primary
-                , textDecoration underline
-                ]
-            ]
-            [ text "Más" ]
         ]
 
 

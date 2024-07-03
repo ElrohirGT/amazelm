@@ -7,6 +7,7 @@ import FormatNumber.Locales exposing (Decimals(..), usLocale)
 theme =
     { background = "#232f3e"
     , lightBackground = "#364759"
+    , darkBackground = "#0D141E"
     , primary = "#146eb4"
     , secondary = "#ff9900"
     , lightSecondary = "#FFB84D"
@@ -21,6 +22,7 @@ theme =
 cssTheme =
     { background = hex (String.dropLeft 1 theme.background)
     , lightBackground = hex (String.dropLeft 1 theme.lightBackground)
+    , darkBackground = hex (String.dropLeft 1 theme.darkBackground)
     , primary = hex (String.dropLeft 1 theme.primary)
     , secondary = hex (String.dropLeft 1 theme.secondary)
     , lightSecondary = hex (String.dropLeft 1 theme.lightSecondary)
