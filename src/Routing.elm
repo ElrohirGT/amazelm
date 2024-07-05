@@ -1,7 +1,6 @@
 module Routing exposing (..)
 
-import Html exposing (Attribute)
-import Html.Attributes exposing (href)
+import Html.Styled.Attributes exposing (href)
 import Url exposing (Url)
 import Url.Parser as P exposing ((</>), Parser, s)
 
@@ -47,20 +46,17 @@ parseUrl basePath url =
 
 {-| Generates an href attribute to go to the details page
 -}
-goToDetails : Int -> Attribute msg
 goToDetails id =
     href (String.concat [ "details/", String.fromInt id ])
 
 
 {-| Generates an href attribute to go to the home page
 -}
-goToHome : Attribute msg
 goToHome =
     href "/"
 
 
 {-| Generates an href attribute to go to the shopping cart page
 -}
-goToShoppingCart : Int -> Attribute msg
 goToShoppingCart id =
     href (String.concat [ "cart/", String.fromInt id ])
