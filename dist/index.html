@@ -13,6 +13,7 @@
 			box-sizing: border-box;
 		}
 	</style>
+	<link rel="manifest" href="manifest.json" />
 </head>
 
 <body>
@@ -23,6 +24,29 @@
 		console.log(`The supplied base path is: ${bPath}`)
 		Elm.Main.init({
 			flags: bPath
+		});
+	</script>
+	<script>
+		function randomNotification(count = 5) {
+			const randomItem = Math.floor(Math.random() * count);
+			const notifTitle = "Random notification appears";
+			const notifBody = `ElrohirGT`;
+			const notifImg = `/imgs/icons/Car.svg`;
+			const options = {
+				body: notifBody,
+				icon: notifImg,
+			};
+			new Notification(notifTitle, options);
+
+			if (count > 0) {
+				setTimeout(() => randomNotification(count - 1), 30000);
+			}
+		}
+
+		Notification.requestPermission().then((result) => {
+			if (result === "granted") {
+				randomNotification();
+			}
 		});
 	</script>
 </body>

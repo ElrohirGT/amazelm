@@ -1,0 +1,16 @@
+{
+  "name": "Amazelm",
+  "short_name": "Amazelm",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ff4500",
+  "description": "An elm web application",
+  "icons": [
+    {
+      "src": "imgs/icons/User.svg",
+      "sizes": "48x48",
+      "type": "image/svg"
+    }
+  ]
+}
+
