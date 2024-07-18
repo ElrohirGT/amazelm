@@ -37,6 +37,7 @@
         nodePackages.live-server
         process-compose
         entr
+        scrcpy
       ];
   in {
     packages = forAllSystems {
