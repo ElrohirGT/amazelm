@@ -2,7 +2,7 @@
   "name": "Amazelm",
   "short_name": "Amazelm",
   "start_url": ".",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#ff4500",
   "description": "An elm web application",
   "icons": [
