@@ -5,7 +5,7 @@ const filesToCache = [
   "/",
   "index.html",
   '/manifest.json',
-  './imgs/icons/User.svg',
+  '/imgs/icons/User.svg',
 ];
 
 self.addEventListener("install", e => {
