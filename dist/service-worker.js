@@ -45,7 +45,10 @@ self.onmessage = (e) => {
 				icon: notifImg,
 			};
 
-		self.registration.showNotification(notifTitle, options).catch((error) => {
+		console.log("Showing notification...")
+		self.registration.showNotification(notifTitle, options).then(()=> {
+			console.log("Notification displayed!");
+		}).catch((error) => {
     console.log(error);
   });
 
