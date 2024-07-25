@@ -32,6 +32,8 @@
 					navigator.serviceWorker?.ready.then((registration) => {
 						console.log("Sending message to worker...")
 						registration.active.postMessage("notify");
+					}).catch(err => {
+						console.error("An error ocurred sending message to worker", err);
 					});
 				}
 			});
