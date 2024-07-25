@@ -1,12 +1,5 @@
 // The name of my cache
 const cacheName = "PWA-Exeboard-test-cache@v0.1";
-//The files I'm going to cache
-const filesToCache = [
-  "/",
-  "index.html",
-  '/manifest.json',
-  '/imgs/icons/User.svg',
-];
 
 self.addEventListener("install", e => {
   console.log("[ServiceWorker] - Install");
@@ -51,7 +44,11 @@ self.onmessage = (e) => {
 				body: notifBody,
 				icon: notifImg,
 			};
-			new Notification(notifTitle, options);
+
+		self.registration.showNotification(notifTitle, options).catch((error) => {
+    console.log(error);
+  });
+
 	}
 };
 
